@@ -43,6 +43,7 @@ CRAWL_STEAM_ASYNC = config_behavior.getboolean('crawl_steam_async')
 # common
 config_common = config['COMMON']
 STEAM_SELL_TAX = float(config_common['steam_sell_tax'])
+EXCHANGE=float(config_common['exchange'])
 TIMESTAMP = str(datetime.now().strftime('%Y-%m-%d-%H:%M:%S'))
 BUFF_GOODS_LIMITED_MIN_PRICE = 0.0
 # buff系统设定的最高售价，价格查询时不得高于此价格
