@@ -25,6 +25,14 @@ class Item:
         self.history_days = 0
         self.average_sold_price = 0
         self.average_sold_price_after_tax = 0
+        self.average_sold_price_after_tax_exchange = 0  # 到手钱数
+        self.discount_percent = 0
+
+        # 倒卖
+        self.up = 0
+
+        # steam 最新的售卖量
+        self.nownum = 0
 
     def set_history_prices(self, prices, days):
         self.history_prices = prices
@@ -34,12 +42,14 @@ class Item:
         self.average_sold_price_after_tax = self.average_sold_price * (1 - STEAM_SELL_TAX)
         self.average_sold_price_after_tax_exchange = self.average_sold_price_after_tax / EXCHANGE  # steam卖到手价
         self.gap = self.average_sold_price_after_tax_exchange - self.price
-        self.gap_percent = self.gap * 1.0 / self.price
-        self.discount_percent = self.price / self.average_sold_price_after_tax_exchange
+        self.gap_percent = self.gap * 1.0 / self.price  # 升值比
+        self.discount_percent = self.price / self.average_sold_price_after_tax_exchange if self.average_sold_price_after_tax_exchange != 0 else 0  # 余额折数
+        self.up = self.price / (self.average_sold_price / EXCHANGE) if self.average_sold_price != 0 else 0
+        self.nownum = self.the_average_num(prices)
 
     def detail(self):
-        return "{}: {}(newest sold price after tax and exchange)(origin sold price :{}) - {}(buff) = {}(beyond {:.2%}, {:.2%}). " \
-               "Sold {} items in {} days.\n steam url:{}\n buff url: https://buff.163.com/market/goods?goods_id={}&from=market#tab=selling" \
+        return "{}: {}(steam卖出到手)(steam原价 :{}) - {}(buff) = {:.2f}(升值{:.2%}, 折率{:.2%}, table2 only{:.2%}). " \
+               "Sold {} items in {} days. Sold {} items now.\n steam url:{}\n buff url: https://buff.163.com/market/goods?goods_id={}&from=market#tab=selling\n" \
             .format(
             self.name,
             '%.2f' % self.average_sold_price_after_tax_exchange,
@@ -48,8 +58,10 @@ class Item:
             self.gap,
             self.gap_percent,
             self.discount_percent,
+            self.up,
             self.history_sold,
             self.history_days,
+            self.nownum,
             self.steam_url,
             self.id
         )
@@ -71,11 +83,21 @@ class Item:
             "history_sold": self.history_sold,
             "history_days": self.history_days,
             "average_sold_price": self.average_sold_price,
-            "average_sold_price_after_tax": self.average_sold_price_after_tax
+            "average_sold_price_after_tax": self.average_sold_price_after_tax,
+            "up_percent": self.up,
+            "now_num": self.nownum
         }
         return item_dict
 
     @staticmethod
-    def centered_average(numbers):
-        return numbers[0] if len(numbers) != 0 else 0
-        # return np.percentile(numbers, 25) if len(numbers) != 0 else 0
+    def centered_average(numbers):  # steam售价提取函数(合理售价预计）
+        '''if np.percentile(numbers, 10) > numbers[0]:
+            return numbers[0] if len(numbers) != 0 else 0
+        else:
+            return np.percentile(numbers, 10) if len(numbers) != 0 else 0
+        '''
+        # return numbers[0] if len(numbers) != 0 else 0  #
+        return np.percentile(numbers,10) if len(numbers) != 0 else 0 #不防跌势
+    @staticmethod
+    def the_average_num(numbers):
+        return numbers.count(numbers[0]) if len(numbers) != 0 else 0
