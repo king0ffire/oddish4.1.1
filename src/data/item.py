@@ -96,8 +96,8 @@ class Item:
         else:
             return np.percentile(numbers, 10) if len(numbers) != 0 else 0
         '''
-        # return numbers[0] if len(numbers) != 0 else 0  #
-        return np.percentile(numbers,10) if len(numbers) != 0 else 0 #不防跌势
+        #return numbers[0] if len(numbers) != 0 else 0  # 最新卖价，table2专用
+        return np.percentile(numbers,10) if len(numbers) != 0 else 0 #table1专用，不防跌势
     @staticmethod
     def the_average_num(numbers):
         return numbers.count(numbers[0]) if len(numbers) != 0 else 0

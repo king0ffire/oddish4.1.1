@@ -65,7 +65,7 @@ def filter_table1(table):
     # suggestion_log.info("After threshold(gap_percent <= {}) filtered: \n{}".format(MAX_GAP_PERCENTAGE, table.describe()))
 
     table = table[table['history_sold'] >= MIN_SOLD_THRESHOLD]
-    table = table[table['now_num'] >= 2] #最新中位数的数据量大于1
+    #table = table[table['now_num'] >= 2] #最新中位数的数据量大于1
 
     # suggestion_log.info(
     #     "After threshold(history_sold >= {}) filtered: \n{}\n".format(MIN_SOLD_THRESHOLD, table.describe()))
@@ -78,7 +78,7 @@ def filter_table2(table):
     # table = table[table['gap_percent'] <= MAX_GAP_PERCENTAGE]
     # suggestion_log.info("After threshold(gap_percent <= {}) filtered: \n{}".format(MAX_GAP_PERCENTAGE, table.describe()))
 
-    table = table[table['sell_num'] >= 500]  # 倒卖时看看如果buff量太小了估计不热门，buff在售量
+    table = table[table['sell_num'] >= 1000]  # 倒卖时看看如果buff量太小了估计不热门，buff在售量
     # suggestion_log.info(
     #     "After threshold(history_sold >= {}) filtered: \n{}\n".format(MIN_SOLD_THRESHOLD, table.describe()))
 
